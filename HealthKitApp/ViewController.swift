@@ -33,16 +33,16 @@ class ViewController: UIViewController, BTDeviceManagerDelegate {
     var heartBeatDuration = 0.0
     
     // MARK: outlets
-    @IBOutlet var deviceLabel : UILabel
-    @IBOutlet var locationLabel : UILabel
-    @IBOutlet var bpmLabel : UILabel
-    @IBOutlet var heartImageView: UIImageView
+    @IBOutlet var deviceLabel : UILabel!
+    @IBOutlet var locationLabel : UILabel!
+    @IBOutlet var bpmLabel : UILabel!
+    @IBOutlet var heartImageView: UIImageView!
     
     // MARK: UIViewController overrides
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        println("viewDidLoad thread = \(NSThread.currentThread()) queue = \(dispatch_get_current_queue())")
+        //println("viewDidLoad thread = \(NSThread.currentThread()) queue = \(dispatch_get_current_queue())")
         origHeartRect = heartImageView.frame
         // init the Bluetooth device manager
         _deviceManager = BTDeviceManager()
@@ -88,7 +88,7 @@ class ViewController: UIViewController, BTDeviceManagerDelegate {
                     let sortDescriptors = NSArray(object: endDate)
                     // build up sampple query
                     let sampleQuery = HKSampleQuery(sampleType: heartRateType, predicate: nil, limit: 1, sortDescriptors: sortDescriptors) { // trailing closure
-                        (query: HKSampleQuery!, objects: AnyObject[]!, error: NSError!) in
+                        (query: HKSampleQuery!, objects: [AnyObject]!, error: NSError!) in
                         if (error) {
                             println("sample query returned error = \(error)")
                         } else if (objects.count > 0) {
@@ -112,7 +112,7 @@ class ViewController: UIViewController, BTDeviceManagerDelegate {
                                     }
                                     // retrieve meta data from sample - sensor location
                                     if let meta = sample.metadata {
-                                        if let location = meta.objectForKey(HKMetadataKeyHeartRateSensorLocation) as NSNumber! {
+                                        if let location = meta[HKMetadataKeyHeartRateSensorLocation] as NSNumber! {
                                             if let sensorLocation = HKHeartRateSensorLocation.fromRaw(location.integerValue) {
                                                 self.updateLocation(sensorLocation)
                                                 println("location = \(sensorLocation.toRaw())")
@@ -238,7 +238,7 @@ class ViewController: UIViewController, BTDeviceManagerDelegate {
                 myHealthStore.saveObject(heartRateSample) { (success: Bool, error: NSError!) -> Void in
                     if (success) {
                         println("successfully saved heart rate sample to HealthKit")
-                    } else if (error) {
+                    } else if (error != nil) {
                         println("error saving heart rate sample to HealthKit = \(error)")
                     }
                 }

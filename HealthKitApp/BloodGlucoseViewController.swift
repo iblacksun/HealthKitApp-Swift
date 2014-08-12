@@ -23,11 +23,11 @@ class BloodGlucoseViewController: UIViewController, UITableViewDelegate, UITable
     let kBloodGlucoseCellIdentifier = "BloodGlucoseIdentifier"
 
     // the list of glucose samples
-    var _bloodGlucoseSamples:AnyObject[]?   // optional
+    var _bloodGlucoseSamples:[AnyObject]?   // optional
     var _dateFormatter:NSDateFormatter!     // implicitly unwrapped optional - use these when they should never be null after initialization
     
     // MARK: Outlets
-    @IBOutlet var tableView: UITableView
+    @IBOutlet var tableView: UITableView!
     
     override func viewDidLoad() {
         let appDelegate = UIApplication.sharedApplication().delegate as AppDelegate
@@ -60,7 +60,7 @@ class BloodGlucoseViewController: UIViewController, UITableViewDelegate, UITable
             let bloodGlucoseType = HKQuantityType.quantityTypeForIdentifier(HKQuantityTypeIdentifierBloodGlucose)
             // build up sampple query
              let sampleQuery = HKSampleQuery(sampleType: bloodGlucoseType, predicate: nil, limit: Int(HKObjectQueryNoLimit), sortDescriptors: sortDescriptors) { // trailing closure
-                (query: HKSampleQuery!, objects: AnyObject[]!, error: NSError!) in
+                (query: HKSampleQuery!, objects: [AnyObject]!, error: NSError!) in
                 if (error) {
                     println("sample query returned error = \(error)")
                 } else if (objects.count > 0) {
@@ -100,7 +100,7 @@ class BloodGlucoseViewController: UIViewController, UITableViewDelegate, UITable
                     println("error saving blood glucose reading to HealthKit = \(error)")
                 }
                 dispatch_async(dispatch_get_main_queue()) {
-                    if (self._bloodGlucoseSamples) {
+                    if (self._bloodGlucoseSamples != nil) {
                         var samplesArray = self._bloodGlucoseSamples!
                         samplesArray.insert(bloodGlucoseSample, atIndex: 0) // this action creates a new array
                         self._bloodGlucoseSamples = samplesArray // this is now our new array
@@ -149,7 +149,7 @@ class BloodGlucoseViewController: UIViewController, UITableViewDelegate, UITable
         // retrieve meta data from sample - when
         if let meta = sample.metadata {
             // notice syntax below optional form of type cast.  We need this since metadata is optional
-            if let when = meta.objectForKey(myHKMetadataKeyBloodGlucoseWhen) as? String {
+            if let when = meta[myHKMetadataKeyBloodGlucoseWhen] as? NSString! {
                 whenText += " (\(when))"
             }
         }

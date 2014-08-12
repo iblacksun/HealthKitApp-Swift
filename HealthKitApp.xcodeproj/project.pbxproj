@@ -195,7 +195,7 @@
 				TargetAttributes = {
 					60D9796F19478735009467D3 = {
 						CreatedOnToolsVersion = 6.0;
-						DevelopmentTeam = YUE6JUNXWM;
+						DevelopmentTeam = EGS984NJV4;
 						SystemCapabilities = {
 							com.apple.BackgroundModes = {
 								enabled = 1;
@@ -207,6 +207,7 @@
 					};
 					60D9798119478735009467D3 = {
 						CreatedOnToolsVersion = 6.0;
+						DevelopmentTeam = EGS984NJV4;
 						TestTargetID = 60D9796F19478735009467D3;
 					};
 				};
@@ -381,6 +382,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CODE_SIGN_ENTITLEMENTS = HealthKitApp/HealthKitApp.entitlements;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				INFOPLIST_FILE = HealthKitApp/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -393,6 +395,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CODE_SIGN_ENTITLEMENTS = HealthKitApp/HealthKitApp.entitlements;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				INFOPLIST_FILE = HealthKitApp/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";

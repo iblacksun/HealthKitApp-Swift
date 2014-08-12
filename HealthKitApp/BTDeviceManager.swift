@@ -27,14 +27,14 @@ class BTDeviceManager : NSObject, CBCentralManagerDelegate, CBPeripheralDelegate
     // the queue for the central manager to operate on
     let _centralManagerQueue: dispatch_queue_t!
     // name of the central manager serial queue
-    let _centralManagerQueueName: CString = "com.tedmrogers.centralmanagerqueue"
+    let _centralManagerQueueName: String = "com.tedmrogers.centralmanagerqueue"
     // the heart rate monitor
     var _heartRateMonitor : CBPeripheral?
     // the callback delegate
     var delegate: BTDeviceManagerDelegate?
     
     // initializer
-    init() {
+    override init() {
         super.init()
         // create the serial queue for the central manager to use
         _centralManagerQueue = dispatch_queue_create(_centralManagerQueueName, DISPATCH_QUEUE_SERIAL)
@@ -64,7 +64,7 @@ class BTDeviceManager : NSObject, CBCentralManagerDelegate, CBPeripheralDelegate
                 let deviceUUID = CBUUID.UUIDWithString(deviceUUIDString)
                 let devicdUUIDs = NSArray(object: deviceUUID)
                 let knownPeripherals = _centralManager.retrievePeripheralsWithIdentifiers(devicdUUIDs)
-                if (knownPeripherals?.count)
+                if (knownPeripherals?.count != 0)
                 {
                     let peripheral = knownPeripherals[0] as CBPeripheral
                     connectToPeripheral(peripheral)
@@ -189,16 +189,16 @@ class BTDeviceManager : NSObject, CBCentralManagerDelegate, CBPeripheralDelegate
         }
     }
 
-    func centralManager(central: CBCentralManager!, didRetrieveConnectedPeripherals peripherals: AnyObject[]!) {
-        for peripheral in peripherals as CBPeripheral[] {
+    func centralManager(central: CBCentralManager!, didRetrieveConnectedPeripherals peripherals: [AnyObject]!) {
+        for peripheral in peripherals as [CBPeripheral] {
             println("\(__FUNCTION__): peripheral = \(peripheral)")
         }
     }
     
-    func centralManager(central: CBCentralManager!, didRetrievePeripherals peripherals: AnyObject[]!) {
-        for peripheral in peripherals as CBPeripheral[] {
+    func centralManager(central: CBCentralManager!, didRetrievePeripherals peripherals: [AnyObject]!) {
+        for peripheral in peripherals as [CBPeripheral] {
             println("\(__FUNCTION__): peripheral = \(peripheral)")
-            if !_heartRateMonitor {
+            if _heartRateMonitor != nil {
                 connectToPeripheral(peripheral)
                 break;
             }
@@ -207,11 +207,11 @@ class BTDeviceManager : NSObject, CBCentralManagerDelegate, CBPeripheralDelegate
     
     // MARK: CBPeripheralDelegate
     func peripheral(peripheral: CBPeripheral!, didDiscoverServices error: NSError!) {
-        if (error) {
+        if ((error) != nil) {
             println("\(__FUNCTION__): error = \(error.description)")
             return
         }
-        let services = peripheral.services as CBService[]
+        let services = peripheral.services as [CBService]
         for service in services {
             println("\(__FUNCTION__): service = \(services)")
             peripheral.discoverCharacteristics(nil, forService: service)
@@ -223,7 +223,7 @@ class BTDeviceManager : NSObject, CBCentralManagerDelegate, CBPeripheralDelegate
             println("\(__FUNCTION__): error = \(error.description)")
             return
         }
-        let charcteristics = service.characteristics as CBCharacteristic[]
+        let charcteristics = service.characteristics as [CBCharacteristic]
         for characteristic in charcteristics {
 //            println("characteristic = \(characteristic) value = \(characteristic.value) UUID = \(characteristic.UUID) isNotifying = \(characteristic.isNotifying) isBroadcasted = \(characteristic.isBroadcasted)")
             // set notification for heart rate measurement
@@ -238,7 +238,7 @@ class BTDeviceManager : NSObject, CBCentralManagerDelegate, CBPeripheralDelegate
             }
             // write heart rate control point
             if (characteristic.UUID.isEqual(CBUUID.UUIDWithString("2A39"))) {
-                let valArray :UInt8[] = [1]
+                let valArray :[UInt8] = [1]
                 let valData = NSData(bytes: valArray, length: valArray.count)
                 peripheral.writeValue(valData, forCharacteristic: characteristic, type: CBCharacteristicWriteType.WithResponse)
             }
@@ -252,7 +252,7 @@ class BTDeviceManager : NSObject, CBCentralManagerDelegate, CBPeripheralDelegate
             println("\(__FUNCTION__): error = \(error.description)")
             return
         }
-        let descriptors = characteristic.descriptors as CBDescriptor[]
+        let descriptors = characteristic.descriptors as [CBDescriptor]
         for descriptor in descriptors {
             println("\(__FUNCTION__): descriptor = \(descriptor) UUID = \(descriptor.UUID) value = \(descriptor.value)")
         }
@@ -263,7 +263,7 @@ class BTDeviceManager : NSObject, CBCentralManagerDelegate, CBPeripheralDelegate
             println("\(__FUNCTION__): error = \(error.description)")
             return
         }
-        println("thread = \(NSThread.currentThread()) queue = \(dispatch_get_current_queue())")
+        //println("thread = \(NSThread.currentThread()) queue = \(dispatch_get_current_queue())")
 //        println("characteristic = \(characteristic) value = \(characteristic.value) UUID = \(characteristic.UUID) isNotifying = \(characteristic.isNotifying) isBroadcasted = \(characteristic.isBroadcasted)")
         // Updated heart rate measurment
         if characteristic.UUID.isEqual(CBUUID.UUIDWithString("2A37")) {
